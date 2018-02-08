@@ -525,8 +525,12 @@ def _refs(obj, named, *ats, **kwds):
                 yield _NamedRef(a, o)
     else:
         for a in ats:  # cf. inspect.getmembers()
-            if hasattr(obj, a):
-                yield getattr(obj, a)
+            try:
+                if hasattr(obj, a):
+                    yield getattr(obj, a)
+            except ValueError as e:
+                if e == 'Cell is empty':
+                    pass
         if kwds:  # kwds are _dir2() args
             for _, o in _dir2(obj, **kwds):
                 yield o
